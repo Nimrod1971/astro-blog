@@ -4,67 +4,255 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nimrod1971 | Deep Sky Logbook</title>
+    <!-- Google Fonts importieren -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-dark: #0b0f19;
-            --bg-card: #151d2a;
+            --bg-dark: #070a12;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --bg-card-hover: rgba(30, 41, 59, 0.8);
             --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.15);
             --text-light: #f8fafc;
             --text-muted: #94a3b8;
-            --border: #2a374e;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.4);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--bg-dark); color: var(--text-light); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; }
-        
-        header { border-bottom: 1px solid var(--border); background: rgba(21, 29, 42, 0.8); backdrop-filter: blur(10px); sticky; top: 0; position: sticky; z-index: 100; }
-        .nav-container { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; }
-        .logo { font-size: 1.25rem; font-weight: bold; color: var(--accent); letter-spacing: 0.5px; }
-        nav button { background: none; border: none; color: var(--text-muted); font-size: 1rem; font-weight: 600; margin-left: 1.5rem; cursor: pointer; transition: color 0.2s; }
-        nav button.active, nav button:hover { color: var(--accent); }
 
-        main { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.05) 0px, transparent 50%);
+            color: var(--text-light); 
+            font-family: 'Inter', sans-serif; 
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        header { 
+            border-bottom: 1px solid var(--border); 
+            background: rgba(7, 10, 18, 0.8); 
+            backdrop-filter: blur(12px); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+        }
+        .nav-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 1.25rem 2rem; 
+        }
+        .logo { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            color: var(--text-light); 
+            letter-spacing: 1px; 
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo span { color: var(--accent); }
+
+        nav { display: flex; gap: 0.5rem; }
+        nav button { 
+            background: transparent; 
+            border: 1px solid transparent; 
+            color: var(--text-muted); 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+        nav button.active, nav button:hover { 
+            color: var(--accent); 
+            background: var(--accent-glow);
+            border-color: var(--border-hover);
+        }
+
+        /* Hauptbereich & Hero Header */
+        main { max-width: 1200px; margin: 2.5rem auto; padding: 0 2rem; }
+
+        .hero {
+            margin-bottom: 3rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2rem;
+        }
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { color: var(--text-muted); font-size: 1rem; }
+
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Blog Grid */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
-        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
-        .card img { width: 100%; height: 200px; object-fit: cover; background: #0f172a; }
-        .card-body { padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-meta { font-size: 0.85rem; color: var(--accent); margin-bottom: 0.5rem; }
-        .card-title { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-light); }
-        .card-text { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; flex-grow: 1; }
+        /* Grid & Modern Cards */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+            gap: 2rem; 
+        }
+        
+        .card { 
+            background: var(--bg-card); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-glow);
+            background: var(--bg-card-hover);
+        }
 
-        /* Galerie */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
-        .gallery-item { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; aspect-ratio: 1; }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-        .gallery-item:hover img { transform: scale(1.05); }
+        .card-img-wrap {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+            background: #0f172a;
+        }
+        .card img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.5s ease;
+        }
+        .card:hover img { transform: scale(1.04); }
+
+        .card-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        /* Badges / Tags */
+        .card-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-date {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border-color: var(--border);
+        }
+
+        .card-title { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.35rem; 
+            font-weight: 700;
+            margin-bottom: 0.75rem; 
+            color: var(--text-light); 
+        }
+        .card-text { 
+            font-size: 0.92rem; 
+            color: var(--text-muted); 
+            line-height: 1.6;
+            white-space: pre-line;
+            flex-grow: 1;
+        }
+
+        /* Galerie Grid */
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            gap: 1.25rem; 
+        }
+        .gallery-item { 
+            position: relative; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 1px solid var(--border); 
+            cursor: pointer; 
+            aspect-ratio: 1; 
+            transition: all 0.3s ease;
+        }
+        .gallery-item:hover {
+            border-color: var(--accent);
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+        }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
 
         /* Lightbox Overlay */
-        .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 1000; padding: 2rem; }
-        .lightbox img { max-width: 90vw; max-height: 85vh; border-radius: 8px; }
+        .lightbox { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(4, 7, 13, 0.92); 
+            backdrop-filter: blur(10px);
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1000; 
+            padding: 2rem; 
+        }
+        .lightbox img { 
+            max-width: 90vw; 
+            max-height: 85vh; 
+            border-radius: 12px; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            border: 1px solid var(--border);
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="nav-container">
-            <div class="logo">✦ NIMROD1971 | ASTRO LOG</div>
+            <div class="logo"><span>✦</span> NIMROD1971 | ASTRO LOG</div>
             <nav>
-                <button class="active" onclick="switchTab('blog')">Beobachtungen</button>
-                <button onclick="switchTab('articles')">Artikel</button>
-                <button onclick="switchTab('gallery')">Galerie</button>
+                <button class="active" onclick="switchTab('blog', this)">Beobachtungen</button>
+                <button onclick="switchTab('articles', this)">Artikel</button>
+                <button onclick="switchTab('gallery', this)">Galerie</button>
             </nav>
         </div>
     </header>
 
     <main>
+        <div class="hero">
+            <h1 id="tab-title">Beobachtungstagebuch</h1>
+            <p id="tab-desc">Dokumentierte Nächte, Aufnahmen und astronomische Notizen.</p>
+        </div>
+
         <section id="blog" class="tab-content active">
             <div id="blog-grid" class="grid">Lade Beobachtungen...</div>
         </section>
 
         <section id="articles" class="tab-content">
-            <div id="article-grid" class="grid">Keine separaten Artikel vorhanden.</div>
+            <div id="article-grid" class="grid">Lade Artikel...</div>
         </section>
 
         <section id="gallery" class="tab-content">
@@ -76,77 +264,107 @@
         <img id="lightbox-img" src="" alt="Vollbild">
     </div>
 
-<script>
-    let siteData = [];
+    <script>
+        let siteData = [];
 
-    async function loadData() {
-        try {
-            const res = await fetch('data.json');
-            siteData = await res.json();
-            renderBlog();
-            renderArticles();
-            renderGallery();
-        } catch (e) {
-            document.getElementById('blog-grid').innerHTML = '<p>Noch keine Daten veröffentlicht.</p>';
+        async function loadData() {
+            try {
+                const res = await fetch('data.json');
+                siteData = await res.json();
+                renderBlog();
+                renderArticles();
+                renderGallery();
+            } catch (e) {
+                document.getElementById('blog-grid').innerHTML = '<p style="color:var(--text-muted)">Noch keine Daten veröffentlich.</p>';
+            }
         }
-    }
 
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        event.target.classList.add('active');
-    }
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
 
-    function renderBlog() {
-        const container = document.getElementById('blog-grid');
-        // Filtert reine Beobachtungen heraus (alles was NICHT Artikel ist)
-        const obs = siteData.filter(e => !(e.obj_type && e.obj_type.toLowerCase().includes('artikel')));
-        container.innerHTML = obs.map(e => createCardHTML(e)).join('');
-    }
-
-    function renderArticles() {
-        const container = document.getElementById('article-grid');
-        // Filtert gezielt Artikel heraus
-        const articles = siteData.filter(e => e.obj_type && e.obj_type.toLowerCase().includes('artikel'));
-        if (articles.length === 0) {
-            container.innerHTML = '<p style="color:var(--text-muted)">Noch keine separaten Artikel vorhanden.</p>';
-            return;
+            // Hero-Text je nach Tab anpassen
+            const titleEl = document.getElementById('tab-title');
+            const descEl = document.getElementById('tab-desc');
+            
+            if (tabId === 'blog') {
+                titleEl.textContent = 'Beobachtungstagebuch';
+                descEl.textContent = 'Dokumentierte Nächte, Aufnahmen und astronomische Notizen.';
+            } else if (tabId === 'articles') {
+                titleEl.textContent = 'Artikel & Berichte';
+                descEl.textContent = 'Testberichte, Guides und Ausrüstungserfahrungen.';
+            } else if (tabId === 'gallery') {
+                titleEl.textContent = 'Astro-Fotogalerie';
+                descEl.textContent = 'Alle gesammelten Aufnahmen im Überblick.';
+            }
         }
-        container.innerHTML = articles.map(e => createCardHTML(e)).join('');
-    }
 
-    function createCardHTML(e) {
-        return `
-            <article class="card">
-                ${e.photos && e.photos.length ? `<img src="${e.photos[0]}" alt="${e.obj_name}">` : ''}
-                <div class="card-body">
-                    <div class="card-meta">${e.date} • ${e.obj_type || 'Beitrag'}</div>
-                    <h2 class="card-title">${e.obj_name}</h2>
-                    <p class="card-text">${e.notes || e.obj_desc || ''}</p>
+        function renderBlog() {
+            const container = document.getElementById('blog-grid');
+            const obs = siteData.filter(e => !(e.obj_type && e.obj_type.toLowerCase().includes('artikel')));
+            if (obs.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted)">Keine Beobachtungen gefunden.</p>';
+                return;
+            }
+            container.innerHTML = obs.map(e => createCardHTML(e)).join('');
+        }
+
+        function renderArticles() {
+            const container = document.getElementById('article-grid');
+            const articles = siteData.filter(e => e.obj_type && e.obj_type.toLowerCase().includes('artikel'));
+            if (articles.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted)">Noch keine separaten Artikel vorhanden.</p>';
+                return;
+            }
+            container.innerHTML = articles.map(e => createCardHTML(e)).join('');
+        }
+
+        function createCardHTML(e) {
+            const hasImage = e.photos && e.photos.length > 0;
+            const skyBortle = e.sky_quality ? `Bortle ${e.sky_quality}` : null;
+            
+            return `
+                <article class="card">
+                    ${hasImage ? `
+                        <div class="card-img-wrap">
+                            <img src="${e.photos[0]}" alt="${e.obj_name}" loading="lazy">
+                        </div>
+                    ` : ''}
+                    <div class="card-body">
+                        <div class="card-badges">
+                            <span class="badge badge-date">${e.date || 'Unbekannt'}</span>
+                            ${e.obj_type ? `<span class="badge">${e.obj_type}</span>` : ''}
+                            ${skyBortle ? `<span class="badge" style="border-color:rgba(129,140,248,0.3); color:#818cf8;">${skyBortle}</span>` : ''}
+                        </div>
+                        <h2 class="card-title">${e.obj_name}</h2>
+                        <div class="card-text">${e.notes || e.obj_desc || ''}</div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderGallery() {
+            const container = document.getElementById('gallery-grid');
+            let images = [];
+            siteData.forEach(e => { if(e.photos) images.push(...e.photos); });
+            if (images.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted)">Keine Bilder in der Galerie.</p>';
+                return;
+            }
+            container.innerHTML = images.map(src => `
+                <div class="gallery-item" onclick="openLightbox('${src}')">
+                    <img src="${src}" alt="Astrofoto" loading="lazy">
                 </div>
-            </article>
-        `;
-    }
+            `).join('');
+        }
 
-    function renderGallery() {
-        const container = document.getElementById('gallery-grid');
-        let images = [];
-        siteData.forEach(e => { if(e.photos) images.push(...e.photos); });
-        container.innerHTML = images.map(src => `
-            <div class="gallery-item" onclick="openLightbox('${src}')">
-                <img src="${src}" alt="Astrofoto">
-            </div>
-        `).join('');
-    }
-
-    function openLightbox(src) {
-        document.getElementById('lightbox-img').src = src;
-        document.getElementById('lightbox').style.display = 'flex';
-    }
-
-    loadData();
-</script>
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').style.display = 'flex';
+        }
 
         loadData();
     </script>
