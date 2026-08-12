@@ -76,56 +76,77 @@
         <img id="lightbox-img" src="" alt="Vollbild">
     </div>
 
-    <script>
-        let siteData = [];
+<script>
+    let siteData = [];
 
-        async function loadData() {
-            try {
-                const res = await fetch('data.json');
-                siteData = await res.json();
-                renderBlog();
-                renderGallery();
-            } catch (e) {
-                document.getElementById('blog-grid').innerHTML = '<p>Noch keine Daten veröffentlich.</p>';
-            }
+    async function loadData() {
+        try {
+            const res = await fetch('data.json');
+            siteData = await res.json();
+            renderBlog();
+            renderArticles();
+            renderGallery();
+        } catch (e) {
+            document.getElementById('blog-grid').innerHTML = '<p>Noch keine Daten veröffentlicht.</p>';
         }
+    }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function renderBlog() {
+        const container = document.getElementById('blog-grid');
+        // Filtert reine Beobachtungen heraus (alles was NICHT Artikel ist)
+        const obs = siteData.filter(e => !(e.obj_type && e.obj_type.toLowerCase().includes('artikel')));
+        container.innerHTML = obs.map(e => createCardHTML(e)).join('');
+    }
+
+    function renderArticles() {
+        const container = document.getElementById('article-grid');
+        // Filtert gezielt Artikel heraus
+        const articles = siteData.filter(e => e.obj_type && e.obj_type.toLowerCase().includes('artikel'));
+        if (articles.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-muted)">Noch keine separaten Artikel vorhanden.</p>';
+            return;
         }
+        container.innerHTML = articles.map(e => createCardHTML(e)).join('');
+    }
 
-        function renderBlog() {
-            const container = document.getElementById('blog-grid');
-            container.innerHTML = siteData.map(e => `
-                <article class="card">
-                    ${e.photos && e.photos.length ? `<img src="${e.photos[0]}" alt="${e.obj_name}">` : ''}
-                    <div class="card-body">
-                        <div class="card-meta">${e.date} • Bortle ${e.sky_quality || 'N/A'} • ${e.obj_type || 'Objekt'}</div>
-                        <h2 class="card-title">${e.obj_name}</h2>
-                        <p class="card-text">${e.notes || e.obj_desc || ''}</p>
-                    </div>
-                </article>
-            `).join('');
-        }
-
-        function renderGallery() {
-            const container = document.getElementById('gallery-grid');
-            let images = [];
-            siteData.forEach(e => { if(e.photos) images.push(...e.photos); });
-            container.innerHTML = images.map(src => `
-                <div class="gallery-item" onclick="openLightbox('${src}')">
-                    <img src="${src}" alt="Astrofoto">
+    function createCardHTML(e) {
+        return `
+            <article class="card">
+                ${e.photos && e.photos.length ? `<img src="${e.photos[0]}" alt="${e.obj_name}">` : ''}
+                <div class="card-body">
+                    <div class="card-meta">${e.date} • ${e.obj_type || 'Beitrag'}</div>
+                    <h2 class="card-title">${e.obj_name}</h2>
+                    <p class="card-text">${e.notes || e.obj_desc || ''}</p>
                 </div>
-            `).join('');
-        }
+            </article>
+        `;
+    }
 
-        function openLightbox(src) {
-            document.getElementById('lightbox-img').src = src;
-            document.getElementById('lightbox').style.display = 'flex';
-        }
+    function renderGallery() {
+        const container = document.getElementById('gallery-grid');
+        let images = [];
+        siteData.forEach(e => { if(e.photos) images.push(...e.photos); });
+        container.innerHTML = images.map(src => `
+            <div class="gallery-item" onclick="openLightbox('${src}')">
+                <img src="${src}" alt="Astrofoto">
+            </div>
+        `).join('');
+    }
+
+    function openLightbox(src) {
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox').style.display = 'flex';
+    }
+
+    loadData();
+</script>
 
         loadData();
     </script>
