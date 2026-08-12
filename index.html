@@ -107,7 +107,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Beobachtungen Grid */
+        /* Grids & Cards */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
@@ -122,6 +122,7 @@
             display: flex; 
             flex-direction: column; 
             backdrop-filter: blur(8px);
+            cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .card:hover {
@@ -182,18 +183,33 @@
             font-size: 0.92rem; 
             color: var(--text-muted); 
             line-height: 1.6;
-            white-space: pre-line;
             flex-grow: 1;
         }
 
-        /* Artikel Layout (Vollbreite Lesefläche) */
-        .articles-container {
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
+        /* Artikel Reader View */
+        .article-reader {
+            display: none;
             max-width: 860px;
             margin: 0 auto;
         }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover {
+            background: var(--accent-glow);
+            border-color: var(--accent);
+        }
+
         .article-post {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -203,15 +219,15 @@
         }
         .article-post h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: var(--text-light);
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
         .article-post h2 {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.4rem;
             color: var(--accent);
-            margin: 1.5rem 0 0.75rem 0;
+            margin: 1.8rem 0 0.8rem 0;
         }
         .article-post p {
             margin-bottom: 1.2rem;
@@ -224,7 +240,6 @@
             color: #cbd5e1;
         }
         .article-post li { margin-bottom: 0.4rem; }
-        /* Eingebettete Bilder im Artikel */
         .article-post img {
             max-width: 100%;
             height: auto;
@@ -301,7 +316,8 @@
         </section>
 
         <section id="articles" class="tab-content">
-            <div id="article-grid" class="articles-container">Lade Artikel...</div>
+            <div id="article-grid" class="grid">Lade Artikel...</div>
+            <div id="article-reader" class="article-reader"></div>
         </section>
 
         <section id="gallery" class="tab-content">
@@ -318,7 +334,8 @@
 
         async function loadData() {
             try {
-                const res = await fetch('data.json');
+                // Cache-Buster durch dynamischen Zeitstempel
+                const res = await fetch('data.json?v=' + new Date().getTime());
                 siteData = await res.json();
                 renderBlog();
                 renderArticles();
@@ -344,6 +361,7 @@
             } else if (tabId === 'articles') {
                 titleEl.textContent = 'Artikel & Berichte';
                 descEl.textContent = 'Unboxing, Testberichte und Ausrüstungserfahrungen.';
+                renderArticles(); // Reset auf Grid-Ansicht bei Tab-Wechsel
             } else if (tabId === 'gallery') {
                 titleEl.textContent = 'Astro-Fotogalerie';
                 descEl.textContent = 'Alle gesammelten Aufnahmen im Überblick.';
@@ -361,18 +379,21 @@
         }
 
         function renderArticles() {
-            const container = document.getElementById('article-grid');
-            const articles = siteData.filter(e => e.obj_type && e.obj_type.toLowerCase().includes('artikel'));
+            const grid = document.getElementById('article-grid');
+            const reader = document.getElementById('article-reader');
+            
+            reader.style.display = 'none';
+            grid.style.display = 'grid';
+
+            const articles = siteData
+                .map((e, idx) => ({ ...e, originalIndex: idx }))
+                .filter(e => e.obj_type && e.obj_type.toLowerCase().includes('artikel'));
+
             if (articles.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted)">Noch keine separaten Artikel vorhanden.</p>';
+                grid.innerHTML = '<p style="color:var(--text-muted)">Noch keine separaten Artikel vorhanden.</p>';
                 return;
             }
-            container.innerHTML = articles.map(e => createArticleHTML(e)).join('');
-            
-            // Klick auf Artikelbilder öffnet Lightbox
-            container.querySelectorAll('img').forEach(img => {
-                img.addEventListener('click', () => openLightbox(img.src));
-            });
+            grid.innerHTML = articles.map(e => createArticleTeaserHTML(e)).join('');
         }
 
         function createCardHTML(e) {
@@ -380,9 +401,9 @@
             const skyBortle = e.sky_quality ? `Bortle ${e.sky_quality}` : null;
             
             return `
-                <article class="card">
+                <article class="card" ${hasImage ? `onclick="openLightbox('${e.photos[0]}')"` : ''}>
                     ${hasImage ? `
-                        <div class="card-img-wrap" onclick="openLightbox('${e.photos[0]}')">
+                        <div class="card-img-wrap">
                             <img src="${e.photos[0]}" alt="${e.obj_name}" loading="lazy">
                         </div>
                     ` : ''}
@@ -399,12 +420,47 @@
             `;
         }
 
-        function createArticleHTML(e) {
-            // Rendere Markdown-Fließtext (Unterstützt Fett, Überschriften, Listen & Inline-Bilder)
+        function createArticleTeaserHTML(e) {
+            let rawText = e.notes || e.obj_desc || '';
+            // Markdown-Zeichen für die kurze Vorschau entfernen
+            let cleanText = rawText.replace(/[#*_\-\[\]\(\)<>!]/g, '').trim();
+            if (cleanText.length > 150) cleanText = cleanText.substring(0, 150) + '...';
+
+            let previewImg = (e.photos && e.photos.length > 0) ? e.photos[0] : null;
+
+            return `
+                <article class="card" onclick="openArticle(${e.originalIndex})">
+                    ${previewImg ? `
+                        <div class="card-img-wrap">
+                            <img src="${previewImg}" alt="${e.obj_name}" loading="lazy">
+                        </div>
+                    ` : ''}
+                    <div class="card-body">
+                        <div class="card-badges">
+                            <span class="badge badge-date">${e.date || 'Unbekannt'}</span>
+                            <span class="badge">Artikel</span>
+                        </div>
+                        <h2 class="card-title">${e.obj_name}</h2>
+                        <p class="card-text">${cleanText || 'Klicke zum Lesen des Artikels...'}</p>
+                        <div style="margin-top:1.2rem; color:var(--accent); font-weight:600; font-size:0.85rem;">Artikel lesen →</div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function openArticle(idx) {
+            const e = siteData[idx];
+            const grid = document.getElementById('article-grid');
+            const reader = document.getElementById('article-reader');
+
+            grid.style.display = 'none';
+            reader.style.display = 'block';
+
             const rawContent = e.notes || e.obj_desc || '';
             const htmlContent = typeof marked !== 'undefined' ? marked.parse(rawContent) : rawContent;
 
-            return `
+            reader.innerHTML = `
+                <button class="back-btn" onclick="renderArticles()">← Zurück zur Artikelübersicht</button>
                 <article class="article-post">
                     <div class="card-badges">
                         <span class="badge badge-date">${e.date || 'Unbekannt'}</span>
@@ -416,6 +472,12 @@
                     </div>
                 </article>
             `;
+
+            reader.querySelectorAll('img').forEach(img => {
+                img.addEventListener('click', () => openLightbox(img.src));
+            });
+
+            window.scrollTo({ top: 180, behavior: 'smooth' });
         }
 
         function renderGallery() {
@@ -431,7 +493,6 @@
                 return;
             }
             
-            // Duplikate in der Galerie entfernen
             const uniqueImages = [...new Set(images)];
 
             container.innerHTML = uniqueImages.map(src => `
