@@ -1,0 +1,17 @@
+[
+  {
+    "date": "2026-08-11",
+    "time": "20:15 CEST",
+    "location": "Weinstadt",
+    "equipment": "Google Pixel 9a",
+    "sky_quality": "3",
+    "weather": "Klar, kühl",
+    "obj_name": "Sonne",
+    "obj_type": "Sonne",
+    "obj_desc": "Die Andromedagalaxie ist eine Spiralgalaxie im Sternbild Andromeda...",
+    "notes": "Eigene Beobachtungsnotizen hier eingeben...\n\n📷 PXL_20260812_181523824.jpg: Belichtung: 5.7e-05s, ISO/Gain: 26\n\nPartielle Sonnenfinsternis, Maximum 20:15Uhr",
+    "photos": [
+      "images/PXL_20260812_181523824.jpg"
+    ]
+  }
+]
