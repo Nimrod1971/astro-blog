@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nimrod1971 | Deep Sky Logbook</title>
-    <!-- Google Fonts importieren -->
+    <!-- Google Fonts & Markdown Parser -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
         :root {
@@ -106,7 +107,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Grid & Modern Cards */
+        /* Beobachtungen Grid */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
@@ -147,7 +148,6 @@
 
         .card-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
         
-        /* Badges / Tags */
         .card-badges {
             display: flex;
             flex-wrap: wrap;
@@ -184,6 +184,55 @@
             line-height: 1.6;
             white-space: pre-line;
             flex-grow: 1;
+        }
+
+        /* Artikel Layout (Vollbreite Lesefläche) */
+        .articles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+        .article-post {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            backdrop-filter: blur(8px);
+        }
+        .article-post h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        .article-post h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            color: var(--accent);
+            margin: 1.5rem 0 0.75rem 0;
+        }
+        .article-post p {
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            color: #cbd5e1;
+            line-height: 1.8;
+        }
+        .article-post ul, .article-post ol {
+            margin: 1rem 0 1.5rem 1.5rem;
+            color: #cbd5e1;
+        }
+        .article-post li { margin-bottom: 0.4rem; }
+        /* Eingebettete Bilder im Artikel */
+        .article-post img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            cursor: pointer;
         }
 
         /* Galerie Grid */
@@ -252,7 +301,7 @@
         </section>
 
         <section id="articles" class="tab-content">
-            <div id="article-grid" class="grid">Lade Artikel...</div>
+            <div id="article-grid" class="articles-container">Lade Artikel...</div>
         </section>
 
         <section id="gallery" class="tab-content">
@@ -275,7 +324,7 @@
                 renderArticles();
                 renderGallery();
             } catch (e) {
-                document.getElementById('blog-grid').innerHTML = '<p style="color:var(--text-muted)">Noch keine Daten veröffentlich.</p>';
+                document.getElementById('blog-grid').innerHTML = '<p style="color:var(--text-muted)">Noch keine Daten veröffentlicht.</p>';
             }
         }
 
@@ -286,7 +335,6 @@
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
 
-            // Hero-Text je nach Tab anpassen
             const titleEl = document.getElementById('tab-title');
             const descEl = document.getElementById('tab-desc');
             
@@ -295,7 +343,7 @@
                 descEl.textContent = 'Dokumentierte Nächte, Aufnahmen und astronomische Notizen.';
             } else if (tabId === 'articles') {
                 titleEl.textContent = 'Artikel & Berichte';
-                descEl.textContent = 'Testberichte, Guides und Ausrüstungserfahrungen.';
+                descEl.textContent = 'Unboxing, Testberichte und Ausrüstungserfahrungen.';
             } else if (tabId === 'gallery') {
                 titleEl.textContent = 'Astro-Fotogalerie';
                 descEl.textContent = 'Alle gesammelten Aufnahmen im Überblick.';
@@ -306,7 +354,7 @@
             const container = document.getElementById('blog-grid');
             const obs = siteData.filter(e => !(e.obj_type && e.obj_type.toLowerCase().includes('artikel')));
             if (obs.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted)">Keine Beobachtungen gefunden.</p>';
+                container.innerHTML = '<p style="color:var(--text-muted)">Keine Beobachtungen vorhanden.</p>';
                 return;
             }
             container.innerHTML = obs.map(e => createCardHTML(e)).join('');
@@ -319,7 +367,12 @@
                 container.innerHTML = '<p style="color:var(--text-muted)">Noch keine separaten Artikel vorhanden.</p>';
                 return;
             }
-            container.innerHTML = articles.map(e => createCardHTML(e)).join('');
+            container.innerHTML = articles.map(e => createArticleHTML(e)).join('');
+            
+            // Klick auf Artikelbilder öffnet Lightbox
+            container.querySelectorAll('img').forEach(img => {
+                img.addEventListener('click', () => openLightbox(img.src));
+            });
         }
 
         function createCardHTML(e) {
@@ -329,7 +382,7 @@
             return `
                 <article class="card">
                     ${hasImage ? `
-                        <div class="card-img-wrap">
+                        <div class="card-img-wrap" onclick="openLightbox('${e.photos[0]}')">
                             <img src="${e.photos[0]}" alt="${e.obj_name}" loading="lazy">
                         </div>
                     ` : ''}
@@ -346,15 +399,42 @@
             `;
         }
 
+        function createArticleHTML(e) {
+            // Rendere Markdown-Fließtext (Unterstützt Fett, Überschriften, Listen & Inline-Bilder)
+            const rawContent = e.notes || e.obj_desc || '';
+            const htmlContent = typeof marked !== 'undefined' ? marked.parse(rawContent) : rawContent;
+
+            return `
+                <article class="article-post">
+                    <div class="card-badges">
+                        <span class="badge badge-date">${e.date || 'Unbekannt'}</span>
+                        <span class="badge">Artikel</span>
+                    </div>
+                    <h1>${e.obj_name}</h1>
+                    <div style="margin-top: 1.5rem;">
+                        ${htmlContent}
+                    </div>
+                </article>
+            `;
+        }
+
         function renderGallery() {
             const container = document.getElementById('gallery-grid');
             let images = [];
-            siteData.forEach(e => { if(e.photos) images.push(...e.photos); });
+            
+            siteData.forEach(e => { 
+                if(e.photos) images.push(...e.photos); 
+            });
+
             if (images.length === 0) {
                 container.innerHTML = '<p style="color:var(--text-muted)">Keine Bilder in der Galerie.</p>';
                 return;
             }
-            container.innerHTML = images.map(src => `
+            
+            // Duplikate in der Galerie entfernen
+            const uniqueImages = [...new Set(images)];
+
+            container.innerHTML = uniqueImages.map(src => `
                 <div class="gallery-item" onclick="openLightbox('${src}')">
                     <img src="${src}" alt="Astrofoto" loading="lazy">
                 </div>
