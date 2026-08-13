@@ -35,5 +35,37 @@
       "images/PXL_20260813_175526015.jpg",
       "images/NGC7635_130826.png"
     ]
+  },
+  {
+    "date": "2026-08-13",
+    "time": "23:17 CEST",
+    "location": "Weinstadt",
+    "equipment": "Seestar S30 Pro",
+    "sky_quality": "4",
+    "weather": "Klar (0% Wolken), 20.1°C, Wind 3.7km/h, Feuchte 47%",
+    "obj_name": "NGC 7635",
+    "obj_type": "Nebel",
+    "obj_desc": "NGC 7635, auch Blasennebel genannt, ist ein Emissionsnebel und eine HII-Region im Sternbild Kassiopeia am Nordsternhimmel, welcher etwa 8.800 Lichtjahre von der Erde entfernt ist. Er befindet sich in der Nähe des offenen Sternhaufens Messier 52. Die Bezeichnung stammt von einer Sternwind-Blase, die durch den Sternwind eines O-Sterns mit der Bezeichnung BD +60 2522 (SAO 20575) entstanden ist. Der Stern stößt große Mengen an Gas aus, die sich mit rund 28 Kilometer pro Sekunde in die Umgebung ausbreiten. Dabei stoßen die expandierenden Gase auf die riesige umgebende Molekülwolke in dieser Region, die der Ausdehnung Widerstand entgegenbringt. Dadurch bildet sich eine Stoßwelle aus, welche die äußere Hülle der Gasblase bildet.\nSAO 20575 hat die Helligkeit von 7,8 mag.",
+    "notes": "First light für das Seestar S30 Pro Teleskop.\nHimmel war noch aufgehellt und diesig.\nEine Stunde belichtet mit Frames à 20 Sekunden.\nUnter besseren Bedingungen wäre da sicher noch mehr heraus zu holen gewesen.",
+    "photos": [
+      "images/Stacked_180_NGC7635_20s_LP_20260813-231804.jpg",
+      "images/NGC7635_130826.tiff"
+    ]
+  },
+  {
+    "date": "2026-08-13",
+    "time": "23:59 CEST",
+    "location": "Weinstadt",
+    "equipment": "Seestar S30 Pro",
+    "sky_quality": "4",
+    "weather": "Klar (0% Wolken), 20.1°C, Wind 3.7km/h, Feuchte 47%",
+    "obj_name": "M101",
+    "obj_type": "Galaxie",
+    "obj_desc": "Messier 101 oder M101, auch als NGC 5457 bezeichnet und Feuerradgalaxie genannt, ist eine Spiralgalaxie im Sternbild Großer Bär, die mit einer scheinbaren Größe von 28,8′ × 26,9′ und scheinbarer Helligkeit von 7,5 mag erscheint. Ihre Entfernung zur Erde beträgt rund 22 Millionen Lichtjahre, ihr Durchmesser 170.000 Lichtjahre. Damit ist sie ungefähr doppelt so groß wie unsere Milchstraße.",
+    "notes": "Himmel war diesig.\nEine halbe Stunde belichtet mit Frames à 20 Sekunden.\nUnter besseren Bedingungen wäre da sicher noch mehr heraus zu holen gewesen.",
+    "photos": [
+      "images/Stacked_90_M101_20s_IRCUT_20260813-235938.jpg",
+      "images/M101_130826.tiff"
+    ]
   }
 ]
