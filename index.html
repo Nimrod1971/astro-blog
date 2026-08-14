@@ -350,7 +350,7 @@
         .modal-photo-thumb:hover { border-color: var(--accent); transform: scale(1.03); }
         .modal-photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Lightbox Overlay */
+        /* Lightbox für Zoom & Pan (1:1 Pixelauflösung Support) */
         .lightbox { 
             display: none; 
             position: fixed; 
@@ -360,15 +360,18 @@
             justify-content: center; 
             align-items: center; 
             z-index: 1000; 
-            padding: 2rem; 
+            overflow: hidden;
+            cursor: zoom-in;
         }
         .lightbox img { 
-            max-width: 95vw; 
+            max-width: 90vw; 
             max-height: 90vh; 
             border-radius: 12px; 
             box-shadow: 0 0 50px rgba(0,0,0,0.9);
             border: 1px solid var(--border);
-            object-fit: contain;
+            transition: transform 0.1s ease-out;
+            transform-origin: center center;
+            user-select: none;
         }
     </style>
 </head>
@@ -412,8 +415,8 @@
     </div>
 
     <!-- Lightbox für Zoom & Vollbild -->
-    <div id="lightbox" class="lightbox" onclick="this.style.display='none'">
-        <img id="lightbox-img" src="" alt="Vollbild / Zoom">
+    <div id="lightbox" class="lightbox" onclick="if(event.target.id === 'lightbox') closeLightbox()">
+        <img id="lightbox-img" src="" alt="Vollbild / 1:1 Pixel-Zoom">
     </div>
 
     <script>
@@ -638,9 +641,82 @@
             `).join('');
         }
 
+        // Lightbox & 1:1 Pixelauflösung Zoom Logik
+        let currentScale = 1;
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0;
+
         function openLightbox(src) {
-            document.getElementById('lightbox-img').src = src;
+            const lbImg = document.getElementById('lightbox-img');
+            lbImg.src = src;
+            
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateImageTransform(lbImg);
+
             document.getElementById('lightbox').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Automatische Berechnung des exakten 1:1 Pixel-Zooms bei Klick
+        const lbImg = document.getElementById('lightbox-img');
+        
+        lbImg.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentScale === 1) {
+                // Berechne den genauen Zoomfaktor für die originale 1:1 Pixelauflösung
+                const naturalW = lbImg.naturalWidth;
+                const displayedW = lbImg.clientWidth;
+                currentScale = naturalW > 0 && displayedW > 0 ? naturalW / displayedW : 3.0;
+                if (currentScale < 1.5) currentScale = 3.0; // Fallback falls Bild bereits sehr klein
+            } else {
+                currentScale = 1;
+                translateX = 0;
+                translateY = 0;
+            }
+            updateImageTransform(lbImg);
+        });
+
+        document.getElementById('lightbox').addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                currentScale = Math.min(currentScale * 1.15, 8.0);
+            } else {
+                currentScale = Math.max(currentScale / 1.15, 1.0);
+                if (currentScale === 1) { translateX = 0; translateY = 0; }
+            }
+            updateImageTransform(lbImg);
+        }, { passive: false });
+
+        lbImg.addEventListener('mousedown', (e) => {
+            if (currentScale > 1) {
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            updateImageTransform(lbImg);
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        function updateImageTransform(img) {
+            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+            img.style.cursor = currentScale > 1 ? 'grab' : 'zoom-in';
         }
 
         loadData();
