@@ -46,7 +46,7 @@
             z-index: 100; 
         }
         .nav-container { 
-            max-width: 1200px; 
+            max-width: 1300px; 
             margin: 0 auto; 
             display: flex; 
             justify-content: space-between; 
@@ -84,14 +84,29 @@
             border-color: var(--border-hover);
         }
 
-        /* Hauptbereich & Hero Header */
-        main { max-width: 1200px; margin: 2.5rem auto; padding: 0 2rem; }
+        /* Hauptlayout mit Sidebar */
+        main { 
+            max-width: 1300px; 
+            margin: 2.5rem auto; 
+            padding: 0 2rem; 
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            main { grid-template-columns: 1fr; }
+            aside { order: -1; }
+        }
+
+        .content-area { min-width: 0; }
 
         .hero {
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
             text-align: left;
             border-bottom: 1px solid var(--border);
-            padding-bottom: 2rem;
+            padding-bottom: 1.5rem;
         }
         .hero h1 {
             font-family: 'Space Grotesk', sans-serif;
@@ -107,10 +122,69 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
+        /* Rechte Sidebar für Archiv */
+        aside {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 6rem;
+        }
+        .sidebar-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .archive-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .archive-item {
+            padding: 0.6rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .archive-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-light);
+        }
+        .archive-item.active {
+            background: var(--accent-glow);
+            color: var(--accent);
+            border: 1px solid var(--border-hover);
+            font-weight: 600;
+        }
+        .archive-count {
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .archive-item.active .archive-count {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
         /* Grids & Cards */
         .grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
             gap: 2rem; 
         }
         
@@ -257,7 +331,7 @@
         /* Galerie Grid */
         .gallery-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
             gap: 1.25rem; 
         }
         .gallery-item { 
@@ -388,23 +462,33 @@
     </header>
 
     <main>
-        <div class="hero">
-            <h1 id="tab-title">Beobachtungstagebuch</h1>
-            <p id="tab-desc">Dokumentierte Nächte, Aufnahmen und astronomische Notizen.</p>
+        <div class="content-area">
+            <div class="hero">
+                <h1 id="tab-title">Beobachtungstagebuch</h1>
+                <p id="tab-desc">Dokumentierte Nächte, Aufnahmen und astronomische Notizen.</p>
+            </div>
+
+            <section id="blog" class="tab-content active">
+                <div id="blog-grid" class="grid">Lade Beobachtungen...</div>
+            </section>
+
+            <section id="articles" class="tab-content">
+                <div id="article-grid" class="grid">Lade Artikel...</div>
+                <div id="article-reader" class="article-reader"></div>
+            </section>
+
+            <section id="gallery" class="tab-content">
+                <div id="gallery-grid" class="gallery-grid">Lade Galerie...</div>
+            </section>
         </div>
 
-        <section id="blog" class="tab-content active">
-            <div id="blog-grid" class="grid">Lade Beobachtungen...</div>
-        </section>
-
-        <section id="articles" class="tab-content">
-            <div id="article-grid" class="grid">Lade Artikel...</div>
-            <div id="article-reader" class="article-reader"></div>
-        </section>
-
-        <section id="gallery" class="tab-content">
-            <div id="gallery-grid" class="gallery-grid">Lade Galerie...</div>
-        </section>
+        <!-- Rechte Archiv-Seitenleiste -->
+        <aside>
+            <div class="sidebar-title">📅 Archiv nach Datum</div>
+            <ul id="archive-list" class="archive-list">
+                <!-- Dynamisch generiert -->
+            </ul>
+        </aside>
     </main>
 
     <!-- Detail Modal für Beobachtungen -->
@@ -421,14 +505,20 @@
 
     <script>
         let siteData = [];
+        let currentTab = 'blog';
+        let selectedFilter = 'all'; // 'all' oder 'YYYY-MM'
+
+        const monthNames = {
+            "01": "Januar", "02": "Februar", "03": "März", "04": "April",
+            "05": "Mai", "06": "Juni", "07": "Juli", "08": "August",
+            "09": "September", "10": "Oktober", "11": "November", "12": "Dezember"
+        };
 
         async function loadData() {
             try {
                 const res = await fetch('data.json?v=' + new Date().getTime());
                 siteData = await res.json();
-                renderBlog();
-                renderArticles();
-                renderGallery();
+                renderCurrentTab();
             } catch (e) {
                 document.getElementById('blog-grid').innerHTML = '<p style="color:var(--text-muted)">Noch keine Daten veröffentlicht.</p>';
             }
@@ -441,6 +531,9 @@
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
 
+            currentTab = tabId;
+            selectedFilter = 'all'; // Reset Filter beim Tabwechsel
+
             const titleEl = document.getElementById('tab-title');
             const descEl = document.getElementById('tab-desc');
             
@@ -450,21 +543,99 @@
             } else if (tabId === 'articles') {
                 titleEl.textContent = 'Artikel & Berichte';
                 descEl.textContent = 'Unboxing, Testberichte und Ausrüstungserfahrungen.';
-                renderArticles();
             } else if (tabId === 'gallery') {
                 titleEl.textContent = 'Astro-Fotogalerie';
                 descEl.textContent = 'Alle gesammelten Aufnahmen im Überblick.';
             }
+
+            renderCurrentTab();
+        }
+
+        function renderCurrentTab() {
+            renderSidebar();
+            if (currentTab === 'blog') renderBlog();
+            else if (currentTab === 'articles') renderArticles();
+            else if (currentTab === 'gallery') renderGallery();
+        }
+
+        // Hilfsfunktion: Datum parsen (YYYY-MM-DD oder ähnlich)
+        function extractYearMonth(dateStr) {
+            if (!dateStr) return null;
+            const match = dateStr.match(/^(\d{4})-(\d{2})/);
+            if (match) return { year: match[1], month: match[2], key: `${match[1]}-${match[2]}` };
+            return null;
+        }
+
+        function renderSidebar() {
+            const listEl = document.getElementById('archive-list');
+            
+            // Relevante Einträge je nach Tab ermitteln
+            let entries = [];
+            if (currentTab === 'blog') {
+                entries = siteData.filter(e => !(e.obj_type && e.obj_type.toLowerCase().includes('artikel')));
+            } else if (currentTab === 'articles') {
+                entries = siteData.filter(e => e.obj_type && e.obj_type.toLowerCase().includes('artikel'));
+            } else if (currentTab === 'gallery') {
+                // Für Galerie zählen wir eindeutige Monate basierend auf den Einträgen, die Fotos enthalten
+                entries = siteData.filter(e => e.photos && e.photos.length > 0);
+            }
+
+            // Monate zählen
+            const counts = {};
+            let totalCount = entries.length;
+
+            entries.forEach(e => {
+                const ym = extractYearMonth(e.date);
+                if (ym) {
+                    counts[ym.key] = (counts[ym.key] || 0) + 1;
+                }
+            });
+
+            // Nach Jahr/Monat absteigend sortieren
+            const sortedKeys = Object.keys(counts).sort().reverse();
+
+            let html = `
+                <li class="archive-item ${selectedFilter === 'all' ? 'active' : ''}" onclick="setFilter('all')">
+                    <span>Alle</span>
+                    <span class="archive-count">${totalCount}</span>
+                </li>
+            `;
+
+            sortedKeys.forEach(key => {
+                const [year, monthNum] = key.split('-');
+                const monthName = monthNames[monthNum] || monthNum;
+                const label = `${monthName} ${year}`;
+                const isActive = selectedFilter === key ? 'active' : '';
+
+                html += `
+                    <li class="archive-item ${isActive}" onclick="setFilter('${key}')">
+                        <span>${label}</span>
+                        <span class="archive-count">${counts[key]}</span>
+                    </li>
+                `;
+            });
+
+            listEl.innerHTML = html;
+        }
+
+        function setFilter(filterKey) {
+            selectedFilter = filterKey;
+            renderCurrentTab();
         }
 
         function renderBlog() {
             const container = document.getElementById('blog-grid');
             const obs = siteData
                 .map((e, idx) => ({ ...e, originalIndex: idx }))
-                .filter(e => !(e.obj_type && e.obj_type.toLowerCase().includes('artikel')));
+                .filter(e => !(e.obj_type && e.obj_type.toLowerCase().includes('artikel')))
+                .filter(e => {
+                    if (selectedFilter === 'all') return true;
+                    const ym = extractYearMonth(e.date);
+                    return ym && ym.key === selectedFilter;
+                });
 
             if (obs.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted)">Keine Beobachtungen vorhanden.</p>';
+                container.innerHTML = '<p style="color:var(--text-muted)">Keine Beobachtungen für diesen Zeitraum gefunden.</p>';
                 return;
             }
             container.innerHTML = obs.map(e => createCardHTML(e)).join('');
@@ -479,10 +650,15 @@
 
             const articles = siteData
                 .map((e, idx) => ({ ...e, originalIndex: idx }))
-                .filter(e => e.obj_type && e.obj_type.toLowerCase().includes('artikel'));
+                .filter(e => e.obj_type && e.obj_type.toLowerCase().includes('artikel'))
+                .filter(e => {
+                    if (selectedFilter === 'all') return true;
+                    const ym = extractYearMonth(e.date);
+                    return ym && ym.key === selectedFilter;
+                });
 
             if (articles.length === 0) {
-                grid.innerHTML = '<p style="color:var(--text-muted)">Noch keine separaten Artikel vorhanden.</p>';
+                grid.innerHTML = '<p style="color:var(--text-muted)">Keine Artikel für diesen Zeitraum gefunden.</p>';
                 return;
             }
             grid.innerHTML = articles.map(e => createArticleTeaserHTML(e)).join('');
@@ -621,14 +797,22 @@
 
         function renderGallery() {
             const container = document.getElementById('gallery-grid');
-            let images = [];
             
-            siteData.forEach(e => { 
+            // Filtere Einträge nach ausgewähltem Zeitraum
+            const filteredEntries = siteData.filter(e => {
+                if (!e.photos || e.photos.length === 0) return false;
+                if (selectedFilter === 'all') return true;
+                const ym = extractYearMonth(e.date);
+                return ym && ym.key === selectedFilter;
+            });
+
+            let images = [];
+            filteredEntries.forEach(e => { 
                 if(e.photos) images.push(...e.photos); 
             });
 
             if (images.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted)">Keine Bilder in der Galerie.</p>';
+                container.innerHTML = '<p style="color:var(--text-muted)">Keine Bilder für diesen Zeitraum in der Galerie.</p>';
                 return;
             }
             
@@ -664,17 +848,15 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Automatische Berechnung des exakten 1:1 Pixel-Zooms bei Klick
         const lbImg = document.getElementById('lightbox-img');
         
         lbImg.addEventListener('click', (e) => {
             e.stopPropagation();
             if (currentScale === 1) {
-                // Berechne den genauen Zoomfaktor für die originale 1:1 Pixelauflösung
                 const naturalW = lbImg.naturalWidth;
                 const displayedW = lbImg.clientWidth;
                 currentScale = naturalW > 0 && displayedW > 0 ? naturalW / displayedW : 3.0;
-                if (currentScale < 1.5) currentScale = 3.0; // Fallback falls Bild bereits sehr klein
+                if (currentScale < 1.5) currentScale = 3.0;
             } else {
                 currentScale = 1;
                 translateX = 0;
