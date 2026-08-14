@@ -67,5 +67,21 @@
       "images/Stacked_90_M101_20s_IRCUT_20260813-235938.jpg",
       "images/M101_130826.tiff"
     ]
+  },
+  {
+    "date": "2026-08-14",
+    "time": "10:16 CEST",
+    "location": "Weinstadt",
+    "equipment": "Seestar S30 Pro",
+    "sky_quality": "1",
+    "weather": "Klar (0% Wolken), 28.9°C, Wind 6.4km/h, Feuchte 24%",
+    "obj_name": "Sonne",
+    "obj_type": "Sonne",
+    "obj_desc": "Die Sonne ist der Stern, welcher der Erde am nächsten ist und das Zentrum des Sonnensystems bildet. Sie liegt im äußeren Drittel der Milchstraße und ist in dieser Umgebung ein durchschnittlich großer Stern. Die Sonne ist ein Zwergstern, der sich im Entwicklungsstadium der Hauptreihe befindet. Sie enthält 99,86 % der Masse, jedoch nur ca. 0,5 % des Drehimpulses des Sonnensystems. Ihr Durchmesser ist mit 1,4 Millionen Kilometern etwa 110-mal so groß wie der der Erde und etwa viermal so groß wie der mittlere Abstand zwischen Erde und Mond. Der mittlere Abstand zur Erde beträgt im Vergleich rund 150 Millionen km. Die Oberfläche der Sonne zeigt eine wechselnde Zahl von Sonnenflecken, die in Zusammenhang mit starken Magnetfeldern stehen. Sie werden neben weiteren Phänomenen als Sonnenaktivität bezeichnet.",
+    "notes": "strahlend blauer Himmel, keinerlei Bewölkung. 5 Fleckengruppen erkennbar.",
+    "photos": [
+      "images/010a78c2-9855-4ea7-9018-28dbe8ec5ca1.jpg",
+      "images/add172c6-bd5e-4f42-acc2-2c3989c68a46.jpg"
+    ]
   }
 ]
