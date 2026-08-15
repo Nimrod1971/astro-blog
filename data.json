@@ -98,5 +98,35 @@
     "photos": [
       "images/IC59_150826.tiff"
     ]
+  },
+  {
+    "date": "2026-08-14",
+    "time": "23:21 CEST",
+    "location": "Weinstadt",
+    "equipment": "Seestar S30 Pro",
+    "sky_quality": "2",
+    "weather": "Klar (0% Wolken), 22.4°C, Wind 2.6km/h, Feuchte 44%",
+    "obj_name": "M97",
+    "obj_type": "Nebel",
+    "obj_desc": "",
+    "notes": "zu wenig Brennweite",
+    "photos": [
+      "images/Stacked_124_M97_20.0s_LP_20260814-232143.jpg"
+    ]
+  },
+  {
+    "date": "2026-08-14",
+    "time": "22:12 CEST",
+    "location": "Weinstadt",
+    "equipment": "Seestar S30 Pro",
+    "sky_quality": "4",
+    "weather": "Klar (0% Wolken), 22.4°C, Wind 2.6km/h, Feuchte 44%",
+    "obj_name": "M52",
+    "obj_type": "Offener Sternhaufen",
+    "obj_desc": "Messier 52 ist ein +7,3 mag heller offener Sternhaufen mit einer Winkelausdehnung von 13′ im Sternbild Kassiopeia. Er befindet sich in einer Entfernung von rund 4600 Lichtjahren zur Sonne, sein Alter wird auf 60 Millionen Jahre geschätzt, womit dieses Objekt zu den jüngeren Haufen seiner Art gehört. Insgesamt umfasst er an die 1000 Sonnenmassen und mehr als 600 Sterne.",
+    "notes": "ein Sternschnuppe der Perseiden und ein Flugzeug haben die Aufnahme gekreuzt.",
+    "photos": [
+      "images/Stacked_30_M52_20.0s_IRCUT_20260814-221333.jpg"
+    ]
   }
 ]
