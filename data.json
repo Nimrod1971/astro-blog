@@ -83,5 +83,20 @@
       "images/010a78c2-9855-4ea7-9018-28dbe8ec5ca1.jpg",
       "images/add172c6-bd5e-4f42-acc2-2c3989c68a46.jpg"
     ]
+  },
+  {
+    "date": "2026-08-15",
+    "time": "03:02 CEST",
+    "location": "Weinstadt",
+    "equipment": "Seestar S30 Pro",
+    "sky_quality": "2",
+    "weather": "Klar (0% Wolken), 21.0°C, Wind 2.5km/h, Feuchte 49%",
+    "obj_name": "IC 59",
+    "obj_type": "Nebel",
+    "obj_desc": "IC 59 ist ein Reflexionsnebel im Sternbild Kassiopeia am Nordsternhimmel. Nahe dem hellen Stern Gamma Cassiopeiae befindet sich außerdem der Emissionsnebel IC 63. Der Stern ist physikalisch gesehen nur 3 bis 4 Lichtjahre von den Nebeln entfernt. IC 63 liegt etwas näher an γ Cas und leuchtet vorwiegend in rotem H-alpha-Licht. IC 59 ist weiter vom Stern entfernt und weist anteilsmäßig weniger H-alpha-Emissionen auf, dafür mehr des charakteristischen blauen Farbtons.",
+    "notes": "auch nach 3h Belichtung nur schwach erkennbar.",
+    "photos": [
+      "images/IC59_150826.tiff"
+    ]
   }
 ]
