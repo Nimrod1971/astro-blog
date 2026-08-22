@@ -109,7 +109,7 @@
     "obj_name": "M97",
     "obj_type": "Nebel",
     "obj_desc": "",
-    "notes": "zu wenig Brennweite",
+    "notes": "zu wenig Brennweite und zu kurz belichtet.",
     "photos": [
       "images/M97_140826.tiff"
     ]
@@ -127,6 +127,36 @@
     "notes": "ein Sternschnuppe der Perseiden und ein Flugzeug haben die Aufnahme gekreuzt.",
     "photos": [
       "images/Stacked_30_M52_20.0s_IRCUT_20260814-221333.jpg"
+    ]
+  },
+  {
+    "date": "2026-08-19",
+    "time": "23:10 CEST",
+    "location": "Weinstadt",
+    "equipment": "Seestar S30",
+    "sky_quality": "3",
+    "weather": "Klar (0% Wolken), 25.8°C, Wind 8.4km/h, Feuchte 45%",
+    "obj_name": "M81",
+    "obj_type": "Galaxie",
+    "obj_desc": "Messier 81, auch als NGC 3031 oder Bodes Galaxie bekannt, ist eine 7,0 mag helle Spiralgalaxie vom Hubble-Typ Sb im Sternbild Großer Bär am Nordsternhimmel. Die scheinbare Fläche von M81 beträgt mit 25′ mal 12′ weniger als der Vollmond. Verglichen mit dem Andromedanebel (M31) erscheint M81 mit etwa einem Dreißigstel von dessen Fläche merklich kleiner und ist etwa viermal weiter entfernt, rund 12 Millionen Lichtjahre.",
+    "notes": "Himmel zu sehr aufgehellt,  keine Details",
+    "photos": [
+      "images/M81_190826.tiff"
+    ]
+  },
+  {
+    "date": "2026-08-19",
+    "time": "23:10 CEST",
+    "location": "Weinstadt",
+    "equipment": "Seestar S30",
+    "sky_quality": "3",
+    "weather": "Klar (0% Wolken), 25.0°C, Wind 7.0km/h, Feuchte 47%",
+    "obj_name": "M82",
+    "obj_type": "Galaxie",
+    "obj_desc": "Messier 82 ist eine Spiralgalaxie mit den Abmessungen 11,2′ × 4,3′ und der scheinbaren Helligkeit von 8,6 mag im Sternbild Großer Bär.",
+    "notes": "Himmel ziemlich aufgehellt.",
+    "photos": [
+      "images/M82_190826.tiff"
     ]
   }
 ]
